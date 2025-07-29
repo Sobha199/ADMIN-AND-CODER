@@ -5,10 +5,10 @@ from google.oauth2.service_account import Credentials
 
 st.set_page_config(page_title="S2M Admin Dashboard", layout="wide")
 
-def connect_sheet(sheet_name):
+def connect_sheet(S2M_Production_Data):
     creds = Credentials.from_service_account_info(st.secrets["gcp_service_account"])
     client = gspread.authorize(creds)
-    return client.open(sheet_name).sheet1
+    return client.open(S2M_Production_Data).sheet1
 
 def fetch_admin_data():
     sheet = connect_sheet("S2M_Production_Data")
