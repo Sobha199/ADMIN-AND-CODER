@@ -6,15 +6,18 @@ from google.oauth2.service_account import Credentials
 
 st.set_page_config(page_title="S2M Coder Portal", layout="wide")
 
+# Connect to Google Sheet
 def connect_sheet("S2M_Production_Data"):
     creds = Credentials.from_service_account_info(st.secrets["gcp_service_account"])
     client = gspread.authorize(creds)
     return client.open("S2M_Production_Data").sheet1
 
+# Submit data
 def submit_coder_data(data):
     sheet = connect_sheet("S2M_Production_Data")
     sheet.append_row(data)
 
+# UI
 st.title("Coder Portal - S2M")
 with st.form("coder_form"):
     date = st.date_input("Date", datetime.today())
@@ -29,4 +32,4 @@ with st.form("coder_form"):
     if submitted:
         row = [str(date), emp_id, emp_name, charts, icd, dos, cph]
         submit_coder_data(row)
-        st.success("Data submitted to Google Sheet successfully!")
+        st.success("✅ Data submitted to Google Sheet successfully!")
