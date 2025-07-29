@@ -9,7 +9,7 @@ st.set_page_config(page_title="S2M Coder Portal", layout="wide")
 
 # Function to connect to Google Sheet
 def connect_sheet(sheet_name):
-    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+    scope = ["https://docs.google.com/spreadsheets/d/1RreF554P5oITseYX4tGRWLgN_gnop3HmNupkkF2lIrY/edit?usp=sharing"]
     creds = ServiceAccountCredentials.from_json_keyfile_name("gcreds.json", scope)
     client = gspread.authorize(creds)
     sheet = client.open(sheet_name).sheet1
