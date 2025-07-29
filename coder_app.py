@@ -1,19 +1,15 @@
-
 import streamlit as st
 import pandas as pd
 from datetime import datetime
 import gspread
-from oauth2client.service_account import ServiceAccountCredentials
+from google.oauth2.service_account import Credentials
 
 st.set_page_config(page_title="S2M Coder Portal", layout="wide")
 
-# Function to connect to Google Sheet
 def connect_sheet(sheet_name):
-    scope = ["S2M_Production_Data"]
-    creds = ServiceAccountCredentials.from_json_keyfile_name("gcreds.json", scope)
+    creds = Credentials.from_service_account_info(st.secrets["gcp_service_account"])
     client = gspread.authorize(creds)
-    sheet = client.open(sheet_name).sheet1
-    return sheet
+    return client.open(sheet_name).sheet1
 
 def submit_coder_data(data):
     sheet = connect_sheet("S2M_Production_Data")
