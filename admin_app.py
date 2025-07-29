@@ -8,7 +8,7 @@ st.set_page_config(page_title="S2M Admin Dashboard", layout="wide")
 
 # Function to connect to Google Sheet
 def connect_sheet(sheet_name):
-    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+    scope = ["S2M_Production_Data"]
     creds = ServiceAccountCredentials.from_json_keyfile_name("gcreds.json", scope)
     client = gspread.authorize(creds)
     sheet = client.open(sheet_name).sheet1
