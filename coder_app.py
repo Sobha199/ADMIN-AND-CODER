@@ -7,7 +7,7 @@ from google.oauth2.service_account import Credentials
 st.set_page_config(page_title="S2M Coder Portal", layout="wide")
 
 # Connect to Google Sheet
-def connect_sheet("S2M_Production_Data"):
+def connect_sheet(sheet_name):
     creds = Credentials.from_service_account_info(st.secrets["gcp_service_account"])
     client = gspread.authorize(creds)
     return client.open("S2M_Production_Data").sheet1
