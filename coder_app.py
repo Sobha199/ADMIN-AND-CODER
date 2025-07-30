@@ -1,30 +1,40 @@
-from google.oauth2.service_account import Credentials
 import streamlit as st
-import requests
+import pandas as pd
+from datetime import datetime
+import base64
+import json
+import gspread
+from google.oauth2.service_account import Credentials
+from google.auth.transport.requests import Request
 
+st.set_page_config(page_title="S2M Coder Portal", layout="wide")
+
+# ---------------------------
+# 🔐 Load credentials from secrets
+# ---------------------------
+def load_credentials_from_base64():
+    b64_creds = st.secrets["gcp"]["base64_key"]
+    creds_dict = json.loads(base64.b64decode(b64_creds).decode("utf-8"))
+    return creds_dict
+
+# ✅ Optional: Test connection
 def test_google_auth():
     try:
+        creds_dict = load_credentials_from_base64()
         creds = Credentials.from_service_account_info(
-            st.secrets["gcp_service_account"],
+            creds_dict,
             scopes=["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
         )
-        creds.refresh(requests.Request())
+        creds.refresh(Request())
         st.success("✅ Google credentials and token are valid!")
     except Exception as e:
         st.error(f"❌ Token refresh failed: {e}")
 
 test_google_auth()
 
-import streamlit as st
-import pandas as pd
-from datetime import datetime
-import gspread
-from google.oauth2.service_account import Credentials
-
-st.set_page_config(page_title="S2M Coder Portal", layout="wide")
-
-# Check if client_email is loading
-# Connect to Google Sheet
+# ---------------------------
+# 📊 Google Sheet Connection
+# ---------------------------
 def connect_sheet(sheet_name):
     creds_info = load_credentials_from_base64()
     creds = Credentials.from_service_account_info(
@@ -36,23 +46,19 @@ def connect_sheet(sheet_name):
     )
     client = gspread.authorize(creds)
     return client.open(sheet_name).sheet1
-    import base64
-import json
 
-def load_credentials_from_base64():
-    b64_creds = st.secrets["gcp"]["base64_key"]
-    creds_dict = json.loads(base64.b64decode(b64_creds).decode("utf-8"))
-    return creds_dict
-
-
-
-# Submit data
+# ---------------------------
+# 📤 Submit to Sheet
+# ---------------------------
 def submit_coder_data(data):
     sheet = connect_sheet("S2M_Production_Data")
     sheet.append_row(data)
 
-# UI
+# ---------------------------
+# 🖥️ UI - Form Input
+# ---------------------------
 st.title("Coder Portal - S2M")
+
 with st.form("coder_form"):
     date = st.date_input("Date", datetime.today())
     emp_id = st.text_input("Employee ID")
