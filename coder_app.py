@@ -1,3 +1,20 @@
+from google.oauth2.service_account import Credentials
+import streamlit as st
+import requests
+
+def test_google_auth():
+    try:
+        creds = Credentials.from_service_account_info(
+            st.secrets["gcp_service_account"],
+            scopes=["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
+        )
+        creds.refresh(requests.Request())
+        st.success("✅ Google credentials and token are valid!")
+    except Exception as e:
+        st.error(f"❌ Token refresh failed: {e}")
+
+test_google_auth()
+
 import streamlit as st
 import pandas as pd
 from datetime import datetime
