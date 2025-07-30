@@ -24,13 +24,27 @@ from google.oauth2.service_account import Credentials
 st.set_page_config(page_title="S2M Coder Portal", layout="wide")
 
 # Check if client_email is loading
-st.write("Loaded client email:", st.secrets["gcp_service_account"]["client_email"])
-
 # Connect to Google Sheet
 def connect_sheet(sheet_name):
-    creds = Credentials.from_service_account_info(st.secrets["gcp_service_account"])
+    creds_info = load_credentials_from_base64()
+    creds = Credentials.from_service_account_info(
+        creds_info,
+        scopes=[
+            "https://www.googleapis.com/auth/spreadsheets",
+            "https://www.googleapis.com/auth/drive"
+        ]
+    )
     client = gspread.authorize(creds)
     return client.open(sheet_name).sheet1
+    import base64
+import json
+
+def load_credentials_from_base64():
+    b64_creds = st.secrets["gcp"]["base64_key"]
+    creds_dict = json.loads(base64.b64decode(b64_creds).decode("utf-8"))
+    return creds_dict
+
+
 
 # Submit data
 def submit_coder_data(data):
